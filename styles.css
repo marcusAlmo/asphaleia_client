@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+header.collapsed {
+  margin-left: 64px;
+}
+
+@media (min-width: 640px) {
+  #main-content {
+    margin-left: 64px;
+  }
+  #main-content:not(.collapsed) {
+    margin-left: 256px;
+  }
+}
+
+@media (max-width: 639px) {
+  #sidebar:not(.open) {
+    transform: translateX(-100%);
+  }
+  #sidebar.open {
+    transform: translateX(0);
+  }
+  .overlay.active {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9;
+  }
+}
+
+#sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+#sidebar.collapsed svg {
+  width: 16px;
+  height: 16px;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  max-height: 300px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 640px) {
+  .chart-container {
+    max-height: 200px;
+  }
+}
+
+/* General table styling for both student and teacher management */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 1rem; /* Matches p-4 */
+  text-align: left;
+  color: #374151; /* text-gray-700 */
+}
+
+tbody tr {
+  border-bottom: 1px solid #e5e7eb; /* divide-y divide-gray-200 */
+}
+
+tbody tr:hover {
+  background-color: #f9fafb; /* hover:bg-gray-50 */
+}
+
+/* Edit and Delete button styling for both student and teacher management */
+.edit-student, .edit-teacher, .delete-student, .delete-teacher {
+  padding: 0.25rem; /* p-1 */
+  border-radius: 9999px; /* rounded-full */
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out; /* transition-colors */
+}
+
+.edit-student, .edit-teacher {
+  color: #2563eb; /* text-blue-600 */
+}
+
+.edit-student:hover, .edit-teacher:hover {
+  color: #1e40af; /* hover:text-blue-800 */
+  background-color: #eff6ff; /* hover:bg-blue-50 */
+}
+
+.delete-student, .delete-teacher {
+  color: #dc2626; /* text-red-600 */
+}
+
+.delete-student:hover, .delete-teacher:hover {
+  color: #991b1b; /* hover:text-red-800 */
+  background-color: #fef2f2; /* hover:bg-red-50 */
+}
+
+/* SVG icon styling inside buttons */
+.edit-student svg, .edit-teacher svg, .delete-student svg, .delete-teacher svg {
+  width: 1.25rem; /* h-5 */
+  height: 1.25rem; /* w-5 */
+}
+
+/* Bulk delete button */
+#bulk-delete {
+  background-color: #dc2626; /* bg-red-600 */
+  color: white; /* text-white */
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  border-radius: 0.5rem; /* rounded-lg */
+  transition: background-color 0.2s ease-in-out;
+}
+
+#bulk-delete:hover {
+  background-color: #b91c1c; /* hover:bg-red-700 */
+}
+
+#bulk-delete:disabled {
+  background-color: #d1d5db; /* bg-gray-300 */
+  cursor: not-allowed;
+}
+
+/* Form buttons */
+#submit-btn, #clear-form-btn, #cancel-btn, #cancel-edit, #fetch-btn {
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  border-radius: 0.5rem; /* rounded-lg */
+  transition: background-color 0.2s ease-in-out;
+}
+
+#submit-btn {
+  background-color: #2563eb; /* bg-blue-600 */
+}
+
+#submit-btn:hover:not(:disabled) {
+  background-color: #1e40af; /* hover:bg-blue-700 */
+}
+
+#clear-form-btn {
+  background-color: #d0d6e2; /* bg-gray-500 */
+}
+
+#clear-form-btn:hover {
+  background-color: #4b5563; /* hover:bg-gray-600 */
+}
+
+#cancel-btn, #cancel-edit {
+  background-color: #dc2626; /* bg-red-500 */
+}
+
+#cancel-btn:hover, #cancel-edit:hover {
+  background-color: #b91c1c; /* hover:bg-red-600 */
+}
+
+#fetch-btn {
+  background-color: #3f495d; /* bg-gray-600 */
+}
+s
+#fetch-btn:hover:not(:disabled) {
+  background-color: #4b5563; /* hover:bg-gray-700 */
+}
+
+/* Role badges for teacher management */
+.bg-purple-100 {
+  background-color: #f3e8ff;
+}
+
+.text-purple-800 {
+  color: #6b21a8;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.text-blue-800 {
+  color: #1e40af;
+}
+
+.bg-green-100 {
+  background-color: #d1fae5;
+}
+
+.text-green-800 {
+  color: #065f46;
+}
