@@ -1,6 +1,99 @@
-(function () {
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  'use strict';
+  
+  // Initialize settings functionality
   const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
   console.log('settings.js: Initializing with urlprefix:', urlprefix);
+  
+  // Initialize sidebar toggle functionality
+  function initSidebar() {
+    console.log('Initializing sidebar...');
+    const sidebar = document.getElementById('sidebar');
+    const header = document.getElementById('header');
+    const mainContent = document.getElementById('main-content');
+    const toggleSidebar = document.getElementById('toggle-sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('overlay');
+    const toggleIcon = document.getElementById('toggle-icon');
+
+    if (!sidebar || !toggleSidebar || !hamburger || !overlay) {
+      console.warn('Sidebar elements not found');
+      return;
+    }
+
+    function updateLayout() {
+      const isMobile = window.innerWidth < 640;
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      const isOpen = sidebar.classList.contains('open');
+
+      if (isCollapsed) {
+        sidebar.classList.remove('w-3/4', 'sm:w-64');
+        sidebar.classList.add('w-16');
+        header.classList.add('collapsed');
+        mainContent.classList.add('collapsed');
+        sidebar.style.transform = 'translateX(0)';
+        overlay.classList.remove('active');
+        if (toggleIcon) {
+          toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />';
+        }
+      } else {
+        sidebar.classList.remove('w-16');
+        sidebar.classList.add(isMobile ? 'w-3/4' : 'sm:w-64');
+        header.classList.remove('collapsed');
+        mainContent.classList.remove('collapsed');
+        if (toggleIcon) {
+          toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />';
+        }
+        
+        if (isMobile && !isOpen) {
+          sidebar.style.transform = 'translateX(-100%)';
+          overlay.classList.remove('active');
+        } else {
+          sidebar.style.transform = 'translateX(0)';
+          overlay.classList.toggle('active', isMobile && isOpen);
+        }
+      }
+    }
+
+    function toggleSidebarState() {
+      if (window.innerWidth < 640) {
+        sidebar.classList.toggle('open');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+      updateLayout();
+    }
+
+    toggleSidebar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSidebarState();
+    });
+
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSidebarState();
+    });
+
+    overlay.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.innerWidth < 640) {
+        toggleSidebarState();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 640) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        sidebar.style.transform = 'translateX(0)';
+      }
+      updateLayout();
+    });
+
+    // Initial layout update
+    updateLayout();
+  }
 
   function showToast(message, isSuccess = true) {
     const toast = document.createElement('div');
@@ -17,10 +110,10 @@
     }, 3000);
   }
 
-    // Main initialization
-    console.log('settings.js: Initializing settings page');
+  // Main initialization
+  console.log('settings.js: Initializing settings page');
 
-    let isLoading = false;
+  let isLoading = false;
     let settings = {};
 
     // Initialize form elements
@@ -93,7 +186,7 @@
       const lateThresholdInput = document.getElementById('lateThreshold') || document.getElementById('setting_late_threshold');
       if (lateThresholdInput) {
         // Format time to HH:MM if needed
-        const timeValue = settings.late_threshold || '08:00';
+        const timeValue = settings.late_threshold || '00:00';
         const [hours, minutes] = timeValue.split(':');
         lateThresholdInput.value = `${hours.padStart(2, '0')}:${(minutes || '00').padStart(2, '0')}`;
         updateSettingsSubmitButtonState();
@@ -415,18 +508,20 @@
     }
   }
 
-  // Initialize the application when DOM is loaded
-  document.addEventListener('DOMContentLoaded', function() {
+  // Initialize the application
+  function initializeApp() {
+    console.log('Initializing application...');
+    
+    // Initialize sidebar
+    initSidebar();
+    
     // Set default time if not already set
     const timeInput = document.getElementById('lateThreshold');
     if (timeInput && !timeInput.value) {
       timeInput.value = '00:15'; // Default to 15 minutes
     }
     
-    // Initialize the application
-    console.log('settings.js: Initializing settings page');
-    
-    // Initialize form first
+    // Initialize form
     updateSettingsForm();
     
     // Set up event listeners
@@ -438,7 +533,10 @@
     
     // Fetch settings from server
     fetchSettings();
-  });
+  }
+  
+  // Start the application
+  initializeApp();
 
   // Function to set time from quick selection buttons
   function setTime(hours, minutes) {
@@ -455,8 +553,6 @@
     timeInput.dispatchEvent(event);
   }
 
-  // Make setTime available globally for the quick time buttons
+    // Make setTime available globally for the quick time buttons
   window.setTime = setTime;
-})();
-
-// Rest of the code remains the same
+});

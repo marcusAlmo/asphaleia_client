@@ -88,11 +88,10 @@
         </svg>
       </button>
       <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Asphaleia</h2>
-      <div class="flex items-center space-x-4">
-        <div id="time-date" class="text-gray-600 text-sm hidden sm:block">
-          <span id="time">11:36:00 AM</span>
-          <span class="mx-2">|</span>
-          <span id="date">Tuesday, August 26, 2025</span>
+      <div class="hidden sm:flex items-center space-x-4">
+        <div class="text-right">
+          <div id="time" class="text-gray-800 font-medium">12:00:00 PM</div>
+          <div id="date" class="text-sm text-gray-600">Monday, January 1, 2023</div>
         </div>
       </div>
     </div>
@@ -199,60 +198,15 @@
       </div>
     </div>
   </section>
+  <!-- Load scripts in order -->
   <script src="utils.js"></script>
   <script src="header.js"></script>
   <script src="settings.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const sidebar = document.getElementById('sidebar');
-      const header = document.getElementById('header');
-      const mainContent = document.getElementById('main-content');
-      const toggleSidebar = document.getElementById('toggle-sidebar');
-      const hamburger = document.getElementById('hamburger');
-      const overlay = document.getElementById('overlay');
-
-      function updateLayout() {
-        if (sidebar.classList.contains('collapsed')) {
-          sidebar.classList.remove('w-3/4', 'sm:w-64');
-          sidebar.classList.add('w-16');
-          header.classList.add('collapsed');
-          mainContent.classList.add('collapsed');
-          sidebar.style.transform = 'translateX(0)';
-          overlay.classList.remove('active');
-        } else {
-          sidebar.classList.remove('w-16');
-          sidebar.classList.add(window.innerWidth < 640 ? 'w-3/4' : 'sm:w-64');
-          header.classList.remove('collapsed');
-          mainContent.classList.remove('collapsed');
-          sidebar.style.transform = window.innerWidth < 640 && !sidebar.classList.contains('open') ? 'translateX(-100%)' : 'translateX(0)';
-          overlay.classList.toggle('active', window.innerWidth < 640 && sidebar.classList.contains('open'));
-        }
-      }
-
-      toggleSidebar.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        if (window.innerWidth < 640) {
-          sidebar.classList.toggle('open');
-        }
-        updateLayout();
-      });
-
-      hamburger.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        if (sidebar.classList.contains('collapsed')) {
-          sidebar.classList.remove('collapsed');
-        }
-        updateLayout();
-      });
-
-      overlay.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        sidebar.classList.remove('collapsed');
-        updateLayout();
-      });
-
-      window.addEventListener('resize', updateLayout);
-      updateLayout();
+    // Initialize when DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // The header.js will handle its own initialization
+      // settings.js will initialize automatically
     });
   </script>
 </body>

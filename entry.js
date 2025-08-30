@@ -3,12 +3,207 @@
   // Test data mirrors the expected API response structure. Includes error handling and debug logging to ensure proper rendering.
   // Runs in a self-invoking function to avoid conflicts with utils.js or header.js.
 
-  const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-  console.log('entry.js: Initializing with urlprefix:', urlprefix);
+  function initSidebar() {
+    console.log('Initializing sidebar...');
+    const sidebar = document.getElementById('sidebar');
+    const header = document.getElementById('header');
+    const mainContent = document.getElementById('main-content');
+    const toggleSidebar = document.getElementById('toggle-sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('overlay');
+    const toggleIcon = document.getElementById('toggle-icon');
 
+    console.log('Sidebar elements:', { sidebar, toggleSidebar, hamburger, overlay });
+
+    if (!sidebar || !toggleSidebar || !hamburger || !overlay) {
+      console.error('Required sidebar elements not found');
+      return;
+    }
+
+    function updateLayout() {
+      console.log('Updating layout...');
+      const isMobile = window.innerWidth < 640;
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      const isOpen = sidebar.classList.contains('open');
+
+      console.log('Layout state:', { isMobile, isCollapsed, isOpen });
+
+      if (isCollapsed) {
+        sidebar.classList.remove('w-3/4', 'sm:w-64');
+        sidebar.classList.add('w-16');
+        if (header) header.classList.add('collapsed');
+        if (mainContent) mainContent.classList.add('collapsed');
+        sidebar.style.transform = 'translateX(0)';
+        if (overlay) overlay.classList.remove('active');
+        if (toggleIcon) {
+          toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />';
+        }
+      } else {
+        sidebar.classList.remove('w-16');
+        sidebar.classList.add(isMobile ? 'w-3/4' : 'sm:w-64');
+        if (header) header.classList.remove('collapsed');
+        if (mainContent) mainContent.classList.remove('collapsed');
+        
+        if (toggleIcon) {
+          toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />';
+        }
+        
+        if (isMobile && !isOpen) {
+          sidebar.style.transform = 'translateX(-100%)';
+          if (overlay) overlay.classList.remove('active');
+        } else {
+          sidebar.style.transform = 'translateX(0)';
+          if (overlay) overlay.classList.toggle('active', isMobile && isOpen);
+        }
+      }
+    }
+
+    function toggleSidebarState() {
+      console.log('Toggling sidebar state...');
+      if (window.innerWidth < 640) {
+        sidebar.classList.toggle('open');
+        if (overlay) overlay.classList.toggle('active');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+      updateLayout();
+    }
+
+    // Add event listeners
+    toggleSidebar.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Toggle sidebar clicked');
+      sidebar.classList.toggle('collapsed');
+      updateLayout();
+    });
+
+    hamburger.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Hamburger clicked');
+      toggleSidebarState();
+    });
+
+    if (overlay) {
+      overlay.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Overlay clicked');
+        toggleSidebarState();
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      console.log('Window resized');
+      if (window.innerWidth >= 640) {
+        sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('active');
+        sidebar.style.transform = 'translateX(0)';
+      }
+      updateLayout();
+    });
+
+    // Initial layout update
+    console.log('Initial layout update');
+    updateLayout();
+  }
+
+  // Initialize everything when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('entry.js: Initializing entry monitoring page with test data');
+    console.log('DOM fully loaded, initializing...');
     
+    // Initialize sidebar first
+    initSidebar();
+    
+    // Rest of your existing code...
+    const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
+    console.log('entry.js: Initializing with urlprefix:', urlprefix);
+
+    // Initialize sidebar toggle functionality
+    // const sidebar = document.getElementById('sidebar');
+    // const header = document.getElementById('header');
+    // const mainContent = document.getElementById('main-content');
+    // const toggleSidebar = document.getElementById('toggle-sidebar');
+    // const hamburger = document.getElementById('hamburger');
+    // const overlay = document.getElementById('overlay');
+    // const toggleIcon = document.getElementById('toggle-icon');
+
+    // if (!sidebar || !toggleSidebar || !hamburger || !overlay) {
+    //   console.warn('Sidebar elements not found');
+    //   return;
+    // }
+
+    // function updateLayout() {
+    //   const isMobile = window.innerWidth < 640;
+    //   const isCollapsed = sidebar.classList.contains('collapsed');
+    //   const isOpen = sidebar.classList.contains('open');
+
+    //   if (isCollapsed) {
+    //     sidebar.classList.remove('w-3/4', 'sm:w-64');
+    //     sidebar.classList.add('w-16');
+    //     header.classList.add('collapsed');
+    //     mainContent.classList.add('collapsed');
+    //     sidebar.style.transform = 'translateX(0)';
+    //     overlay.classList.remove('active');
+    //     if (toggleIcon) {
+    //       toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />';
+    //     }
+    //   } else {
+    //     sidebar.classList.remove('w-16');
+    //     sidebar.classList.add(isMobile ? 'w-3/4' : 'sm:w-64');
+    //     header.classList.remove('collapsed');
+    //     mainContent.classList.remove('collapsed');
+    //     if (toggleIcon) {
+    //       toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />';
+    //     }
+        
+    //     if (isMobile && !isOpen) {
+    //       sidebar.style.transform = 'translateX(-100%)';
+    //       overlay.classList.remove('active');
+    //     } else {
+    //       sidebar.style.transform = 'translateX(0)';
+    //       overlay.classList.toggle('active', isMobile && isOpen);
+    //     }
+    //   }
+    // }
+
+    // function toggleSidebarState() {
+    //   if (window.innerWidth < 640) {
+    //     sidebar.classList.toggle('open');
+    //   } else {
+    //     sidebar.classList.toggle('collapsed');
+    //   }
+    //   updateLayout();
+    // }
+
+    // if (toggleSidebar) {
+    //   toggleSidebar.addEventListener('click', () => {
+    //     sidebar.classList.toggle('collapsed');
+    //     updateLayout();
+    //   });
+    // }
+
+    // if (hamburger) {
+    //   hamburger.addEventListener('click', toggleSidebarState);
+    // }
+
+    // if (overlay) {
+    //   overlay.addEventListener('click', toggleSidebarState);
+    // }
+
+    // window.addEventListener('resize', () => {
+    //   if (window.innerWidth >= 640) {
+    //     sidebar.classList.remove('open');
+    //     overlay.classList.remove('active');
+    //     sidebar.style.transform = 'translateX(0)';
+    //   }
+    //   updateLayout();
+    // });
+
+    // // Initial layout update
+    // updateLayout();
+
     // Set default date to today and add change event listener
     const dateFilter = document.getElementById('dateFilter');
     if (dateFilter) {

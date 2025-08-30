@@ -172,55 +172,15 @@
   </section>
   <script src="utils.js"></script>
   <script src="header.js"></script>
-  <script src="entry.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const sidebar = document.getElementById('sidebar');
-      const header = document.getElementById('header');
-      const mainContent = document.getElementById('main-content');
-      const toggleSidebar = document.getElementById('toggle-sidebar');
-      const hamburger = document.getElementById('hamburger');
-      const overlay = document.getElementById('overlay');
-
-      function updateLayout() {
-        if (sidebar.classList.contains('collapsed')) {
-          sidebar.classList.remove('w-3/4', 'sm:w-64');
-          sidebar.classList.add('w-16');
-          header.classList.add('collapsed');
-          mainContent.classList.add('collapsed');
-          sidebar.style.transform = 'translateX(0)';
-          overlay.classList.remove('active');
-        } else {
-          sidebar.classList.remove('w-16');
-          sidebar.classList.add(window.innerWidth < 640 ? 'w-3/4' : 'sm:w-64');
-          header.classList.remove('collapsed');
-          mainContent.classList.remove('collapsed');
-          sidebar.style.transform = window.innerWidth < 640 && !sidebar.classList.contains('open') ? 'translateX(-100%)' : 'translateX(0)';
-          overlay.classList.toggle('active', window.innerWidth < 640 && sidebar.classList.contains('open'));
-        }
-      }
-
-      toggleSidebar.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        if (window.innerWidth < 640) {
-          sidebar.classList.toggle('open');
-        }
-        updateLayout();
-      });
-
-      hamburger.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        updateLayout();
-      });
-
-      overlay.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        sidebar.classList.remove('collapsed');
-        updateLayout();
-      });
-
-      window.addEventListener('resize', updateLayout);
-      updateLayout();
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load entry.js after the DOM is fully loaded
+      const script = document.createElement('script');
+      script.src = 'entry.js';
+      script.onload = function() {
+        console.log('entry.js loaded successfully');
+      };
+      document.body.appendChild(script);
     });
   </script>
 </body>
