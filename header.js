@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 mainContent.classList.add('collapsed');
                 sidebar.style.transform = 'translateX(0)';
                 overlay.classList.remove('active');
+                document.body.classList.remove('overflow-hidden');
             } else {
                 sidebar.classList.remove('w-16');
                 sidebar.classList.add(isMobile ? 'w-3/4' : 'sm:w-64');
@@ -68,11 +69,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 mainContent.classList.remove('collapsed');
                 
                 if (isMobile) {
-                    sidebar.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
-                    overlay.classList.toggle('active', isOpen);
+                    const isNowOpen = !sidebar.style.transform || sidebar.style.transform === 'translateX(0px)';
+                    sidebar.style.transform = isNowOpen ? 'translateX(-100%)' : 'translateX(0)';
+                    overlay.classList.toggle('active', !isNowOpen);
+                    document.body.classList.toggle('overflow-hidden', !isNowOpen);
                 } else {
                     sidebar.style.transform = 'translateX(0)';
                     overlay.classList.remove('active');
+                    document.body.classList.remove('overflow-hidden');
                 }
             }
         }

@@ -1,7 +1,15 @@
 (function() {
-  // Note: This script initializes the entry monitoring page with test data for an entry list and status pie chart.
-  // Test data mirrors the expected API response structure. Includes error handling and debug logging to ensure proper rendering.
-  // Runs in a self-invoking function to avoid conflicts with utils.js or header.js.
+  'use strict';
+  
+  console.log('entry.js: Script loaded');
+  
+  // Global variables
+  const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
+  console.log('entry.js: Initializing with urlprefix:', urlprefix);
+  
+  // DOM elements
+  let currentPage = 1;
+  const itemsPerPage = 10;
 
   function initSidebar() {
     console.log('Initializing sidebar...');
@@ -109,100 +117,80 @@
     updateLayout();
   }
 
-  // Initialize everything when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded, initializing...');
+  // Main initialization function
+  function initializeApp() {
+    console.log('Initializing application...');
     
     // Initialize sidebar first
     initSidebar();
     
-    // Rest of your existing code...
-    const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-    console.log('entry.js: Initializing with urlprefix:', urlprefix);
-
-    // Initialize sidebar toggle functionality
-    // const sidebar = document.getElementById('sidebar');
-    // const header = document.getElementById('header');
-    // const mainContent = document.getElementById('main-content');
-    // const toggleSidebar = document.getElementById('toggle-sidebar');
-    // const hamburger = document.getElementById('hamburger');
-    // const overlay = document.getElementById('overlay');
-    // const toggleIcon = document.getElementById('toggle-icon');
-
-    // if (!sidebar || !toggleSidebar || !hamburger || !overlay) {
-    //   console.warn('Sidebar elements not found');
-    //   return;
-    // }
-
-    // function updateLayout() {
-    //   const isMobile = window.innerWidth < 640;
-    //   const isCollapsed = sidebar.classList.contains('collapsed');
-    //   const isOpen = sidebar.classList.contains('open');
-
-    //   if (isCollapsed) {
-    //     sidebar.classList.remove('w-3/4', 'sm:w-64');
-    //     sidebar.classList.add('w-16');
-    //     header.classList.add('collapsed');
-    //     mainContent.classList.add('collapsed');
-    //     sidebar.style.transform = 'translateX(0)';
-    //     overlay.classList.remove('active');
-    //     if (toggleIcon) {
-    //       toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />';
-    //     }
-    //   } else {
-    //     sidebar.classList.remove('w-16');
-    //     sidebar.classList.add(isMobile ? 'w-3/4' : 'sm:w-64');
-    //     header.classList.remove('collapsed');
-    //     mainContent.classList.remove('collapsed');
-    //     if (toggleIcon) {
-    //       toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />';
-    //     }
+    // Initialize refresh button
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+      console.log('Setting up refresh button...');
+      refreshBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        console.log('Refresh button clicked');
         
-    //     if (isMobile && !isOpen) {
-    //       sidebar.style.transform = 'translateX(-100%)';
-    //       overlay.classList.remove('active');
-    //     } else {
-    //       sidebar.style.transform = 'translateX(0)';
-    //       overlay.classList.toggle('active', isMobile && isOpen);
-    //     }
-    //   }
-    // }
-
-    // function toggleSidebarState() {
-    //   if (window.innerWidth < 640) {
-    //     sidebar.classList.toggle('open');
-    //   } else {
-    //     sidebar.classList.toggle('collapsed');
-    //   }
-    //   updateLayout();
-    // }
-
-    // if (toggleSidebar) {
-    //   toggleSidebar.addEventListener('click', () => {
-    //     sidebar.classList.toggle('collapsed');
-    //     updateLayout();
-    //   });
-    // }
-
-    // if (hamburger) {
-    //   hamburger.addEventListener('click', toggleSidebarState);
-    // }
-
-    // if (overlay) {
-    //   overlay.addEventListener('click', toggleSidebarState);
-    // }
-
-    // window.addEventListener('resize', () => {
-    //   if (window.innerWidth >= 640) {
-    //     sidebar.classList.remove('open');
-    //     overlay.classList.remove('active');
-    //     sidebar.style.transform = 'translateX(0)';
-    //   }
-    //   updateLayout();
-    // });
-
-    // // Initial layout update
-    // updateLayout();
+        // Get elements
+        const refreshIcon = document.getElementById('refresh-icon');
+        const refreshSpinner = document.getElementById('refresh-spinner');
+        const refreshText = document.getElementById('refresh-text');
+        
+        console.log('Refresh elements:', { refreshBtn, refreshIcon, refreshSpinner, refreshText });
+        
+        try {
+          // Show loading state
+          refreshBtn.disabled = true;
+          if (refreshIcon) refreshIcon.classList.add('hidden');
+          if (refreshSpinner) refreshSpinner.classList.remove('hidden');
+          if (refreshText) refreshText.textContent = 'Refreshing...';
+          
+          console.log('Loading state set, refreshing data...');
+          
+          // Refresh data
+          await renderEntryList();
+          
+          console.log('Data refresh complete');
+        } catch (error) {
+          console.error('Error during refresh:', error);
+        } finally {
+          // Reset button state
+          refreshBtn.disabled = false;
+          if (refreshIcon) refreshIcon.classList.remove('hidden');
+          if (refreshSpinner) refreshSpinner.classList.add('hidden');
+          if (refreshText) refreshText.textContent = 'Refresh';
+          console.log('Button state reset');
+        }
+      });
+      console.log('Refresh button setup complete');
+    } else {
+      console.error('Refresh button not found!');
+    }
+    
+    // Initialize entry list and other components
+    const initPage = async () => {
+      try {
+        console.log('Initializing page components...');
+        await renderEntryList();
+        console.log('Page components initialized');
+      } catch (error) {
+        console.error('Error initializing page:', error);
+      }
+    };
+    
+    // Start initialization
+    initPage();
+  }
+  
+  // Global variables
+  // Initialize everything when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+  } else {
+    // DOM already loaded, initialize immediately
+    initializeApp();
+  }
 
     // Set default date to today and add change event listener
     const dateFilter = document.getElementById('dateFilter');
@@ -480,6 +468,7 @@
 
       // Helper function to get status color class
       const getStatusColorClass = (status) => {
+        if (!status) return 'text-gray-600';
         switch(status.toLowerCase()) {
           case 'on time': return 'text-green-600';
           case 'late': return 'text-yellow-600';
@@ -490,34 +479,46 @@
 
       // Function to handle filter changes
       const handleFilterChange = async () => {
-        currentPage = 1; // Reset to first page when filters change
+        console.log('handleFilterChange called');
         const refreshBtn = document.getElementById('refresh-btn');
+        const refreshIcon = document.getElementById('refresh-icon');
+        const refreshSpinner = document.getElementById('refresh-spinner');
+        const refreshText = document.getElementById('refresh-text');
         
-        if (refreshBtn) {
+        console.log('Elements:', { refreshBtn, refreshIcon, refreshSpinner, refreshText });
+        
+        // Show loading state
+        if (refreshBtn && refreshIcon && refreshSpinner && refreshText) {
+          console.log('Setting loading state...');
           refreshBtn.disabled = true;
-          refreshBtn.innerHTML = `
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Loading...
-          `;
+          console.log('Button disabled');
+          refreshIcon.classList.add('hidden');
+          console.log('Icon hidden');
+          refreshSpinner.classList.remove('hidden');
+          console.log('Spinner shown');
+          refreshText.textContent = 'Refreshing...';
+          console.log('Text updated to Refreshing...');
+        } else {
+          console.error('One or more refresh elements not found:', {
+            refreshBtn: !!refreshBtn,
+            refreshIcon: !!refreshIcon,
+            refreshSpinner: !!refreshSpinner,
+            refreshText: !!refreshText
+          });
         }
         
         try {
-          await Promise.all([
-            renderEntryChart(),
-            renderPage(currentPage)
-          ]);
+          currentPage = 1; // Reset to first page when filters change
+          await renderPage(currentPage);
+        } catch (error) {
+          console.error('Error in handleFilterChange:', error);
         } finally {
-          if (refreshBtn) {
+          // Reset button state
+          if (refreshBtn && refreshIcon && refreshSpinner && refreshText) {
             refreshBtn.disabled = false;
-            refreshBtn.innerHTML = `
-              <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>Refresh</span>
-            `;
+            refreshIcon.classList.remove('hidden');
+            refreshSpinner.classList.add('hidden');
+            refreshText.textContent = 'Refresh';
           }
         }
       };
@@ -539,43 +540,53 @@
         });
       }
 
-      // Event listeners for filter changes and refresh button
-      const filterElements = [
-        { element: dateFilter, event: 'change' },
-        { element: startTimeFilter, event: 'change' },
-        { element: endTimeFilter, event: 'change' },
-        { element: statusFilter, event: 'change' },
-        { element: refreshBtn, event: 'click' }
-      ];
-
-      filterElements.forEach(({ element, event }) => {
+      // Event listeners for filter changes
+      [dateFilter, startTimeFilter, endTimeFilter, statusFilter].forEach(element => {
         if (element) {
-          element.addEventListener(event, handleFilterChange);
+          element.addEventListener('change', handleFilterChange);
         }
       });
+
+      // Add click event listener to refresh button
+      if (refreshBtn) {
+        console.log('Setting up refresh button event listener');
+        refreshBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log('Refresh button clicked');
+          console.log('Calling handleFilterChange...');
+          try {
+            handleFilterChange();
+            console.log('handleFilterChange called successfully');
+          } catch (error) {
+            console.error('Error in refresh button handler:', error);
+          }
+        });
+        console.log('Refresh button event listener set up');
+      } else {
+        console.error('Refresh button element not found!');
+      }
 
       // Initial render
       console.log('entry.js: Starting initialization');
       handleFilterChange();
     };
 
-    // Initialize components
-    console.log('entry.js: Starting initialization');
-    
-    // Initialize the list and chart
-    const initPage = async () => {
-      try {
-        await Promise.all([
-          renderEntryList(),
-          // renderEntryChart()
-        ]);
-        console.log('entry.js: Initialization complete');
-      } catch (error) {
-        console.error('Error during initialization:', error);
-      }
-    };
-    
-    // Start initialization
-    initPage();
-  });
+  // Helper function to get status color class
+  function getStatusColorClass(status) {
+    if (!status) return 'text-gray-600';
+    switch(status.toLowerCase()) {
+      case 'on time': return 'text-green-600';
+      case 'late': return 'text-yellow-600';
+      case 'absent': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  }
+  
+  // Initialize everything when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+  } else {
+    // DOM already loaded, initialize immediately
+    initializeApp();
+  }
 })();

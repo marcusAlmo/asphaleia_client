@@ -29,9 +29,15 @@
     const header = document.getElementById('header');
 
     function toggleSidebar() {
-        sidebar.classList.toggle('-translate-x-full');
+        const isOpen = sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
-        document.body.classList.toggle('overflow-hidden');
+        if (window.innerWidth < 640) { // Only apply to mobile
+            if (isOpen) {
+                document.body.classList.remove('overflow-hidden');
+            } else {
+                document.body.classList.add('overflow-hidden');
+            }
+        }
     }
 
     if (hamburger && sidebar && overlay) {
