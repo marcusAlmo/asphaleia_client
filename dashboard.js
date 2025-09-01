@@ -3,11 +3,8 @@
   // Test data mirrors the expected API response structure. Enhanced with error handling and debug logging for chart sizes.
 
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('dashboard.js: Initializing dashboard with test data');
-
     // Function: Update summary cards
     const updateSummaryData = () => {
-      console.log('dashboard.js: Updating summary data');
       const elements = {
         totalStudents: document.getElementById('total-students'),
         presentAbsent: document.getElementById('present-absent'),
@@ -34,7 +31,6 @@
       elements.presentAbsent.textContent = `${summaryData.present}/${summaryData.absent}`;
       elements.avgEntryTime.textContent = summaryData.avgEntryTime;
       elements.scheduledClasses.textContent = summaryData.scheduledClasses;
-      console.log('dashboard.js: Summary data updated', summaryData);
 
       /*
        * API Integration Point:
@@ -47,7 +43,6 @@
 
     // Function: Render attendance bar chart
     const renderAttendanceChart = () => {
-      console.log('dashboard.js: Rendering attendance chart');
       const canvas = document.getElementById('attendanceChart');
       if (!canvas) {
         console.error('dashboard.js: Attendance chart canvas not found');
@@ -80,11 +75,6 @@
             maintainAspectRatio: false
           }
         });
-        console.log('dashboard.js: Attendance chart rendered', {
-          data: attendanceData,
-          width: canvas.width,
-          height: canvas.height
-        });
       } catch (error) {
         console.error('dashboard.js: Error rendering attendance chart:', error);
         canvas.parentElement.innerHTML += '<p class="text-red-600 text-center">Failed to load chart</p>';
@@ -101,7 +91,6 @@
 
     // Function: Render entry status pie chart
     const renderEntryChart = () => {
-      console.log('dashboard.js: Rendering entry status pie chart');
       const canvas = document.getElementById('entryChart');
       if (!canvas) {
         console.error('dashboard.js: Entry chart canvas not found');
@@ -136,11 +125,6 @@
             }
           }
         });
-        console.log('dashboard.js: Entry status pie chart rendered', {
-          data: entryData,
-          width: canvas.width,
-          height: canvas.height
-        });
       } catch (error) {
         console.error('dashboard.js: Error rendering entry chart:', error);
         canvas.parentElement.innerHTML += '<p class="text-red-600 text-center">Failed to load pie chart</p>';
@@ -157,7 +141,6 @@
 
     // Function: Render attendance trend chart
     const renderTrendChart = () => {
-      console.log('dashboard.js: Rendering attendance trend chart');
       const canvas = document.getElementById('trendChart');
       if (!canvas) {
         console.error('dashboard.js: Trend chart canvas not found');
@@ -190,11 +173,6 @@
             maintainAspectRatio: false
           }
         });
-        console.log('dashboard.js: Attendance trend chart rendered', {
-          data: trendData,
-          width: canvas.width,
-          height: canvas.height
-        });
       } catch (error) {
         console.error('dashboard.js: Error rendering trend chart:', error);
         canvas.parentElement.innerHTML += '<p class="text-red-600 text-center">Failed to load chart</p>';
@@ -211,7 +189,6 @@
 
     // Function: Render late students list
     const renderLateStudents = () => {
-      console.log('dashboard.js: Rendering late students list');
       const lateStudentsList = document.getElementById('late-students-list');
       const prevPageBtn = document.getElementById('prev-page');
       const nextPageBtn = document.getElementById('next-page');
@@ -250,7 +227,6 @@
         pageInfo.innerHTML = `Page <span class="font-semibold">${page}</span> of <span class="font-semibold">${totalPages}</span>`;
         prevPageBtn.disabled = page === 1;
         nextPageBtn.disabled = page === totalPages;
-        console.log('dashboard.js: Late students page rendered', { page, totalPages });
       };
 
       prevPageBtn.addEventListener('click', () => {
@@ -278,12 +254,10 @@
        */
     };
 
-    console.log('dashboard.js: Starting initialization');
     updateSummaryData();
     renderAttendanceChart();
     renderEntryChart();
     renderTrendChart();
     renderLateStudents();
-    console.log('dashboard.js: Initialization complete');
   });
 })();

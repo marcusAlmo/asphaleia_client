@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize settings functionality
   const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-  console.log('settings.js: Initializing with urlprefix:', urlprefix);
   
   // Sidebar initialization is handled in header.js
 
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Main initialization
-  console.log('settings.js: Initializing settings page');
 
   let isLoading = false;
     let settings = {};
@@ -39,9 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelSettingsBtn = document.getElementById('cancel-settings-edit');
     const cancelAdminBtn = document.getElementById('cancel-admin-edit');
 
-    // Debug log to check if forms are found
-    console.log('Settings form found:', !!settingsForm);
-    console.log('Admin form found:', !!adminForm);
+    // Form elements initialized
 
     async function fetchSettings(showLoading = true, signal = null) {
       if (showLoading) setLoading(true, 'settings');
@@ -62,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const response = await fetch(`${urlprefix}/settings`, fetchOptions);
-        console.log('Settings API response:', response);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (data && data.success) {
@@ -163,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
       setLoading(true, 'settings');
       const formData = new FormData(thresholdForm);
       const lateThreshold = formData.get('lateThreshold');
-      console.log('Form data:', { lateThreshold });
       
       if (!lateThreshold) {
         showToast('Please select a valid time', false);
@@ -175,15 +169,12 @@ document.addEventListener('DOMContentLoaded', function() {
         late_threshold: lateThreshold,
       };
       
-      console.log('Sending to server:', updatedSettings);
-
       try {
         const response = await fetch(`${urlprefix}/update-settings`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedSettings),
         });
-        console.log('Save settings response:', response);
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.message || 'Failed to save settings');
@@ -198,7 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
           throw new Error(result.message || 'Failed to save settings');
         }
       } catch (error) {
-        console.error('Error saving settings:', error);
         showToast(`Error: ${error.message}`, false);
         return false;
       } finally {
@@ -253,9 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }),
         });
         
-        console.log('Change password response status:', response.status);
         const result = await response.json().catch(() => ({}));
-        console.log('Change password response data:', result);
         
         if (!response.ok) {
           throw new Error(result.message || 'Failed to update credentials');
@@ -387,7 +375,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function setupEventListeners() {
-    console.log('Setting up event listeners...');
     
     // Settings form submission
     if (settingsForm) {
@@ -423,7 +410,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Initialize the application
   function initializeApp() {
-    console.log('Initializing application...');
     
     // Set default time if not already set
     const timeInput = document.getElementById('lateThreshold');

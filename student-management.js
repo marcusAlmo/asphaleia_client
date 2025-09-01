@@ -1,6 +1,5 @@
 (function() {
   const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-  console.log('student-management.js: Initializing with urlprefix:', urlprefix);
 
   // Toast notification function
   function showToast(message, isSuccess = true) {
@@ -19,7 +18,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('student-management.js: Initializing student management page');
 
     // Mobile sidebar toggle
     const hamburger = document.getElementById('hamburger');
@@ -67,32 +65,27 @@
 
     // Fetch grade and section data
     async function fetchGradeSections() {
-      console.log('Fetching grade sections from:', `${urlprefix}/grade-sections`);
       try {
         const response = await fetch(`${urlprefix}/grade-sections`, { 
           signal: AbortSignal.timeout(10000) 
         });
 
-        console.log('Grade sections API response:', response);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
-        console.log('Grade sections API response:', data);
         
         if (data && data.success && data.grades && data.sections) {
           gradeSections = {
             grades: data.grades,
             sections: data.sections
           };
-          console.log('Grade sections fetched successfully:', gradeSections);
         } else {
           throw new Error('Invalid response format from server');
         }
       } catch (error) {
-        console.error('Error fetching grade sections:', error);
         showToast('Failed to fetch grade sections', false);
         gradeSections = {};
       } finally {
@@ -104,14 +97,12 @@
     function populateGradeLevels() {
       const gradeSelect = document.getElementById('gradeLevel');
       if (!gradeSelect) {
-        console.error('Grade level select element not found');
         return;
       }
 
       gradeSelect.innerHTML = '<option value="" disabled selected>Select Grade Level</option>';
       
       if (!gradeSections.grades || !Array.isArray(gradeSections.grades)) {
-        console.error('No grade levels available');
         return;
       }
 
@@ -127,14 +118,12 @@
         updateSubmitButtonState();
       });
       
-      console.log('Grade levels populated');
     }
 
     // Populate sections based on selected grade
     function populateSections(gradeId) {
       const sectionSelect = document.getElementById('section');
       if (!sectionSelect) {
-        console.error('Section select element not found');
         return;
       }
     
@@ -142,12 +131,10 @@
       sectionSelect.disabled = true;
     
       if (!gradeId) {
-        console.log('No grade selected');
         return;
       }
 
       if (!gradeSections.sections || !Array.isArray(gradeSections.sections)) {
-        console.error('No sections data available');
         return;
       }
 
@@ -161,19 +148,16 @@
           option.textContent = section.name || section.id;
           sectionSelect.appendChild(option);
         });
-        console.log(`Populated ${filteredSections.length} sections for grade ${gradeId}`);
       }
       updateSubmitButtonState();
     }
 
     // Fetch students with pagination
     async function fetchStudents(page = 1, query = '', retries = 3, delay = 2000) {
-      console.log('fetchStudents called with page:', page, 'query:', query);
       const controls = ['page-info', 'prev-page', 'next-page', 'refresh-btn', 'select-all']
         .map(id => document.getElementById(id));
       
       if (controls.some(ctrl => !ctrl)) {
-        console.error('Pagination controls not found');
         return;
       }
 
@@ -188,7 +172,6 @@
           signal: AbortSignal.timeout(15000) 
         });
         const data = await response.json();
-        console.log('API Response:', JSON.stringify(data, null, 2));
 
         if (data.success) {
           students = data.students || [];
@@ -202,7 +185,6 @@
           throw new Error(data.message || 'Failed to fetch students');
         }
       } catch (error) {
-        console.error('Error fetching students:', error);
         if (retries > 0 && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
           await new Promise(resolve => setTimeout(resolve, delay));
           return fetchStudents(page, query, retries - 1, delay * 2);
@@ -220,12 +202,10 @@
 
     // Render student table
     const renderStudentTable = (page, data = filteredStudents) => {
-      console.log('renderStudentTable called with page:', page, 'data:', data);
       const elements = ['student-table', 'prev-page', 'next-page', 'page-info', 'bulk-delete', 'select-all']
         .map(id => document.getElementById(id));
       
       if (elements.some(el => !el)) {
-        console.error('Table elements not found');
         return;
       }
 
@@ -236,7 +216,6 @@
         (page - 1) * itemsPerPage,
         page * itemsPerPage
       );
-      console.log('Paginated items:', paginatedItems);
 
       paginatedItems.forEach(student => {
         const row = document.createElement('tr');
@@ -306,8 +285,7 @@
                 throw new Error(data.message || 'Failed to delete student');
               }
             } catch (error) {
-              console.error('Error deleting student:', error);
-              showToast(`Failed to delete student ${studentName}`, false);
+                showToast(`Failed to delete student ${studentName}`, false);
             }
           }
         });
@@ -388,7 +366,6 @@
         .map(id => document.getElementById(id));
       
       if (elements.some(el => !el)) {
-        console.error('Biometric elements not found');
         return;
       }
 
@@ -446,8 +423,7 @@
               stopPolling();
             }
           } catch (error) {
-            console.error('Polling error:', error);
-          }
+            }
         }, 1000);
 
         // Set timeout to stop polling after 10 seconds
@@ -533,7 +509,6 @@
     // Handle edit student
     async function handleEditStudent(studentId) {
       const student = students.find(s => s.id === studentId);
-      console.log('Found student:', student);
       if (!student) {
         showToast('Student not found', false);
         return;
@@ -605,7 +580,6 @@
             fingerprint_id: document.getElementById('fingerprint').value.trim() || null
           };
 
-          console.log(formData);
 
           // Validate required fields
           if (!formData.name || formData.gradeLevel === undefined || !formData.section) {
@@ -644,10 +618,6 @@
           const endpoint = isEditing ? `${urlprefix}/students/update` : `${urlprefix}/students/register`;
           const method = isEditing ? 'PUT' : 'POST';
 
-          console.log(formData);
-          for (const [key, value] of Object.entries(formData)) {
-            console.log(`${key}: ${value} Type: ${typeof value}`);
-          }
           
           const response = await fetch(endpoint, {
             method,
@@ -664,7 +634,6 @@
             throw new Error(result.message || `Failed to ${isEditing ? 'update' : 'add'} student`);
           }
         } catch (error) {
-          console.error(`Error ${isEditing ? 'updating' : 'adding'} student:`, error);
           showToast(`Failed to ${isEditing ? 'update' : 'add'} student. Please try again.`, false);
         } finally {
           // Restore button state
@@ -697,7 +666,6 @@
           await fetchStudents(currentPage);
           showToast('Student list refreshed successfully');
         } catch (error) {
-          console.error('Refresh failed:', error);
           showToast('Failed to refresh student list', false);
         } finally {
           refreshBtn.disabled = false;
@@ -722,7 +690,6 @@
     });
 
     // Initialize all components
-    console.log('Initializing student management');
     fetchGradeSections();
     fetchStudents(currentPage);
     handleStudentForm();
@@ -733,6 +700,5 @@
     handleClearForm();
     handleCancelEdit();
     handleFormInputChanges();
-    console.log('Initialization complete');
   });
 })();

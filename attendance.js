@@ -4,12 +4,10 @@
   // Runs in a self-invoking function to avoid conflicts with utils.js or header.js.
 
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('attendance.js: Initializing attendance page with test data');
 
     // Function: Render attendance status pie chart
     // Purpose: Displays a pie chart showing the distribution of attendance statuses (Present, Absent, Late).
     const renderAttendanceChart = () => {
-      console.log('attendance.js: Rendering attendance status pie chart');
       const canvas = document.getElementById('attendanceChart');
       if (!canvas) {
         console.error('attendance.js: Attendance chart canvas not found');
@@ -44,11 +42,6 @@
               }
             }
           }
-        });
-        console.log('attendance.js: Attendance status pie chart rendered', {
-          data: attendanceData,
-          width: canvas.width,
-          height: canvas.height
         });
       } catch (error) {
         console.error('attendance.js: Error rendering attendance chart:', error);
@@ -112,7 +105,6 @@
     // Function: Render attendance table with pagination
     // Purpose: Displays a paginated table of student attendance records (ID, name, section, year, entry time, entry date, status).
     const renderAttendanceTable = () => {
-      console.log('attendance.js: Rendering attendance table');
       const attendanceTable = document.getElementById('attendance-table');
       const prevPageBtn = document.getElementById('prev-page');
       const nextPageBtn = document.getElementById('next-page');
@@ -160,7 +152,6 @@
         pageInfo.innerHTML = `Page <span class="font-semibold">${page}</span> of <span class="font-semibold">${totalPages}</span>`;
         prevPageBtn.disabled = page === 1;
         nextPageBtn.disabled = page === totalPages;
-        console.log('attendance.js: Attendance table page rendered', { page, totalPages });
       };
 
       prevPageBtn.addEventListener('click', () => {
@@ -249,9 +240,7 @@
     };
 
     // Initialize all components
-    console.log('attendance.js: Starting initialization');
     renderAttendanceChart();
     renderAttendanceTable();
-    console.log('attendance.js: Initialization complete');
   });
 })();

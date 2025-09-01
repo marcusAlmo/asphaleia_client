@@ -1,6 +1,5 @@
 (function() {
   const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-  console.log('machine.js: Initializing with urlprefix:', urlprefix);
 
   // Toast notification function
   function showToast(message, isSuccess = true) {
@@ -19,7 +18,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('machine.js: Initializing machine management page');
 
     // Configuration
     let machines = [];
@@ -31,7 +29,6 @@
 
     // Fetch machines with pagination
     async function fetchMachines(page = 1, query = '', retries = 3, delay = 2000) {
-      console.log('fetchMachines called with page:', page, 'query:', query);
       const controls = ['page-info', 'prev-page', 'next-page', 'refresh-btn', 'select-all']
         .map(id => document.getElementById(id));
       
@@ -51,7 +48,6 @@
           signal: AbortSignal.timeout(15000) 
         });
         const data = await response.json();
-        console.log('API Response:', JSON.stringify(data, null, 2));
 
         if (data.success) {
           machines = data.machines || [];
@@ -83,7 +79,6 @@
 
     // Render machine table
     const renderMachineTable = (page, data = filteredMachines) => {
-      console.log('renderMachineTable called with page:', page, 'data:', data);
       const elements = ['machine-table', 'prev-page', 'next-page', 'page-info', 'bulk-delete', 'select-all']
         .map(id => document.getElementById(id));
       
@@ -99,7 +94,6 @@
         (page - 1) * itemsPerPage,
         page * itemsPerPage
       );
-      console.log('Paginated items:', paginatedItems);
 
       paginatedItems.forEach(machine => {
         const row = document.createElement('tr');
@@ -394,7 +388,6 @@
     // Handle edit machine
     async function handleEditMachine(machineId) {
       const machine = machines.find(m => m.machine_id === machineId);
-      console.log('Found machine:', machine);
       if (!machine) {
         showToast('Machine not found', false);
         return;
@@ -458,8 +451,6 @@
             type: document.getElementById('type').value,
             status: document.getElementById('status').value,
           };
-
-          console.log(formData);
 
           // Validate required fields
           if (!formData.machine_id || !formData.name || !formData.location || !formData.type) {
@@ -556,7 +547,6 @@
     });
 
     // Initialize all components
-    console.log('Initializing machine management');
     fetchMachines(currentPage);
     handleMachineForm();
     handleSearch();
@@ -566,6 +556,5 @@
     handleClearForm();
     handleCancelEdit();
     handleFormInputChanges();
-    console.log('Initialization complete');
   });
 })();

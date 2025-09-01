@@ -1,18 +1,15 @@
 (function() {
   // Note: This script initializes the reports page with test data for an attendance report table and section bar chart.
-  // Test data mirrors the expected API response structure. Includes error handling and debug logging to ensure proper rendering.
+  // Test data mirrors the expected API response structure. Includes error handling to ensure proper rendering.
   // Runs in a self-invoking function to avoid conflicts with utils.js or header.js.
 
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('reports.js: Initializing reports page with test data');
 
     // Function: Render attendance by section bar chart
     // Purpose: Displays a bar chart showing attendance counts by section.
     const renderAttendanceChart = () => {
-      console.log('reports.js: Rendering attendance by section bar chart');
       const canvas = document.getElementById('attendanceChart');
       if (!canvas) {
-        console.error('reports.js: Attendance chart canvas not found');
         return;
       }
 
@@ -60,13 +57,7 @@
             }
           }
         });
-        console.log('reports.js: Attendance by section bar chart rendered', {
-          data: sectionData,
-          width: canvas.width,
-          height: canvas.height
-        });
       } catch (error) {
-        console.error('reports.js: Error rendering attendance chart:', error);
         canvas.parentElement.innerHTML += '<p class="text-red-600 text-center">Failed to load bar chart</p>';
       }
 
@@ -125,14 +116,12 @@
     // Function: Render attendance report table with pagination
     // Purpose: Displays a paginated table of student attendance records (ID, name, section, year, entry time, entry date, status).
     const renderReportTable = () => {
-      console.log('reports.js: Rendering attendance report table');
       const reportTable = document.getElementById('report-table');
       const prevPageBtn = document.getElementById('prev-page');
       const nextPageBtn = document.getElementById('next-page');
       const pageInfo = document.getElementById('page-info');
 
       if (!reportTable || !prevPageBtn || !nextPageBtn || !pageInfo) {
-        console.error('reports.js: Report table elements not found');
         return;
       }
 
@@ -173,7 +162,6 @@
         pageInfo.innerHTML = `Page <span class="font-semibold">${page}</span> of <span class="font-semibold">${totalPages}</span>`;
         prevPageBtn.disabled = page === 1;
         nextPageBtn.disabled = page === totalPages;
-        console.log('reports.js: Attendance report table page rendered', { page, totalPages });
       };
 
       prevPageBtn.addEventListener('click', () => {
@@ -262,15 +250,12 @@
     // Function: Handle download report button
     // Purpose: Placeholder for generating and downloading a report (e.g., CSV or PDF).
     const handleDownloadReport = () => {
-      console.log('reports.js: Download report button clicked');
       const downloadBtn = document.getElementById('download-btn');
       if (!downloadBtn) {
-        console.error('reports.js: Download button not found');
         return;
       }
 
       downloadBtn.addEventListener('click', () => {
-        console.log('reports.js: Initiating report download');
         // Placeholder for download functionality
         alert('Report download functionality to be implemented (e.g., CSV or PDF export).');
         /*
@@ -316,10 +301,8 @@
     };
 
     // Initialize all components
-    console.log('reports.js: Starting initialization');
     renderAttendanceChart();
     renderReportTable();
     handleDownloadReport();
-    console.log('reports.js: Initialization complete');
   });
 })();

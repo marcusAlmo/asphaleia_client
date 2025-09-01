@@ -23,13 +23,8 @@ filesToUpdate.forEach(file => {
     
     if (updatedContent !== content) {
       fs.writeFileSync(filePath, updatedContent, 'utf8');
-      console.log(`✅ Updated ${file}`);
-    } else {
-      console.log(`ℹ️  No changes needed for ${file}`);
     }
   } catch (error) {
     console.error(`❌ Error processing ${file}:`, error.message);
   }
 });
-
-console.log('\n🎉 All files have been processed!');

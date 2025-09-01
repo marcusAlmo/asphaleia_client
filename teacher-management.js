@@ -1,6 +1,5 @@
 (function() {
   const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-  console.log('teacher-management.js: Initializing with urlprefix:', urlprefix);
 
   // Toast notification function
   function showToast(message, isSuccess = true) {
@@ -19,7 +18,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('teacher-management.js: Initializing teacher management page');
 
     // Configuration
     let teachers = [];
@@ -40,7 +38,6 @@
     function populateRoles() {
       const roleSelect = document.getElementById('role');
       if (!roleSelect) {
-        console.error('Role select element not found');
         showToast('Role dropdown not found', false);
         return;
       }
@@ -55,17 +52,14 @@
       });
 
       roleSelect.addEventListener('change', updateSubmitButtonState);
-      console.log('Roles populated:', roles);
     }
 
     // Fetch teachers with pagination
     async function fetchTeachers(page = 1, query = '', retries = 3, delay = 2000) {
-      console.log('fetchTeachers called with page:', page, 'query:', query);
       const controls = ['page-info', 'prev-page', 'next-page', 'refresh-btn', 'select-all']
         .map(id => document.getElementById(id));
       
       if (controls.some(ctrl => !ctrl)) {
-        console.error('Pagination controls not found');
         return;
       }
 
@@ -80,7 +74,6 @@
           signal: AbortSignal.timeout(15000) 
         });
         const data = await response.json();
-        console.log('API Response:', JSON.stringify(data, null, 2));
 
         if (data.success) {
           teachers = data.teachers || [];
@@ -94,7 +87,6 @@
           throw new Error(data.message || 'Failed to fetch teachers');
         }
       } catch (error) {
-        console.error('Error fetching teachers:', error);
         if (retries > 0 && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
           await new Promise(resolve => setTimeout(resolve, delay));
           return fetchTeachers(page, query, retries - 1, delay * 2);
@@ -112,14 +104,10 @@
 
     // Render teacher table
     const renderTeacherTable = (page, data = filteredTeachers) => {
-      console.log('renderTeacherTable called with page:', page, 'data:', data);
       const elements = ['teacher-table', 'prev-page', 'next-page', 'page-info', 'bulk-delete', 'select-all']
         .map(id => document.getElementById(id));
       
-      if (elements.some(el => !el)) {
-        console.error('Table elements not found');
-        return;
-      }
+      if (elements.some(el => !el)) return;
 
       const [table, prevBtn, nextBtn, pageInfo] = elements;
       table.innerHTML = '';
@@ -128,7 +116,6 @@
         (page - 1) * itemsPerPage,
         page * itemsPerPage
       );
-      console.log('Paginated items:', paginatedItems);
 
       paginatedItems.forEach(teacher => {
         const row = document.createElement('tr');
@@ -287,7 +274,6 @@
         .map(id => document.getElementById(id));
       
       if (elements.some(el => !el)) {
-        console.error('Biometric elements not found');
         return;
       }
 
@@ -323,7 +309,6 @@
             }
             updateSubmitButtonState();
           } catch (error) {
-            console.error('Polling error:', error);
           }
         }, 1000);
 
@@ -412,7 +397,6 @@
     async function handleEditTeacher(teacherId) {
       try {
         const teacher = teachers.find(t => t.id === teacherId);
-        console.log('Found teacher:', teacher);
         if (!teacher) {
           showToast('Teacher not found', false);
           return;
@@ -425,7 +409,6 @@
         const fingerprintCheck = document.getElementById('fingerprint-check');
         
         if (!formTitle || !submitBtnText || !cancelBtn || !rfidCheck || !fingerprintCheck) {
-          console.error('Required form elements not found');
           showToast('Error loading teacher form', false);
           return;
         }
@@ -451,11 +434,9 @@
           
           updateSubmitButtonState();
         } else {
-          console.error('Teacher form not found');
           showToast('Error loading teacher form', false);
         }
       } catch (error) {
-        console.error('Error in handleEditTeacher:', error);
         showToast('Error loading teacher details', false);
       }
     }
@@ -487,7 +468,6 @@
           fingerprint_id: document.getElementById('fingerprint').value.trim() || null
         };
 
-        console.log(formData);
 
         if (!formData.name || !formData.email || !formData.role) {
           showToast('Please fill in all required fields', false);
@@ -523,7 +503,6 @@
             throw new Error(result.message || `Failed to ${isEditing ? 'update' : 'add'} teacher`);
           }
         } catch (error) {
-          console.error(`Error ${isEditing ? 'updating' : 'adding'} teacher:`, error);
           showToast(`Failed to ${isEditing ? 'update' : 'add'} teacher. Please try again.`, false);
         }
       });
@@ -533,13 +512,11 @@
     const handleRefresh = () => {
       const refreshBtn = document.getElementById('refresh-btn');
       if (!refreshBtn) {
-        console.error('Refresh button not found');
         showToast('Refresh button not found', false);
         return;
       }
 
       refreshBtn.addEventListener('click', async () => {
-        console.log('Refresh button clicked');
         const originalContent = refreshBtn.innerHTML;
         refreshBtn.disabled = true;
         refreshBtn.innerHTML = `
@@ -553,12 +530,10 @@
           await fetchTeachers(currentPage);
           showToast('Teacher list refreshed successfully');
         } catch (error) {
-          console.error('Refresh failed:', error);
           showToast('Failed to refresh teacher list', false);
         } finally {
           refreshBtn.disabled = false;
           refreshBtn.innerHTML = originalContent;
-          console.log('Refresh button state restored');
         }
       });
     };
@@ -579,7 +554,6 @@
     });
 
     // Initialize all components
-    console.log('Initializing teacher management');
     populateRoles();
     fetchTeachers(currentPage);
     handleTeacherForm();
@@ -590,6 +564,5 @@
     handleClearForm();
     handleCancelEdit();
     handleFormInputChanges();
-    console.log('Initialization complete');
   });
 })();

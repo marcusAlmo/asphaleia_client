@@ -1,18 +1,14 @@
 (function() {
   'use strict';
   
-  console.log('entry.js: Script loaded');
-  
   // Global variables
   const { urlprefix } = window.utils || { urlprefix: 'https://asphaleia.onrender.com/api/v1' };
-  console.log('entry.js: Initializing with urlprefix:', urlprefix);
   
   // DOM elements
   let currentPage = 1;
   const itemsPerPage = 10;
 
   function initSidebar() {
-    console.log('Initializing sidebar...');
     const sidebar = document.getElementById('sidebar');
     const header = document.getElementById('header');
     const mainContent = document.getElementById('main-content');
@@ -21,20 +17,14 @@
     const overlay = document.getElementById('overlay');
     const toggleIcon = document.getElementById('toggle-icon');
 
-    console.log('Sidebar elements:', { sidebar, toggleSidebar, hamburger, overlay });
-
     if (!sidebar || !toggleSidebar || !hamburger || !overlay) {
-      console.error('Required sidebar elements not found');
       return;
     }
 
     function updateLayout() {
-      console.log('Updating layout...');
       const isMobile = window.innerWidth < 640;
       const isCollapsed = sidebar.classList.contains('collapsed');
       const isOpen = sidebar.classList.contains('open');
-
-      console.log('Layout state:', { isMobile, isCollapsed, isOpen });
 
       if (isCollapsed) {
         sidebar.classList.remove('w-3/4', 'sm:w-64');
@@ -67,7 +57,6 @@
     }
 
     function toggleSidebarState() {
-      console.log('Toggling sidebar state...');
       if (window.innerWidth < 640) {
         sidebar.classList.toggle('open');
         if (overlay) overlay.classList.toggle('active');
@@ -81,7 +70,6 @@
     toggleSidebar.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Toggle sidebar clicked');
       sidebar.classList.toggle('collapsed');
       updateLayout();
     });
@@ -89,7 +77,6 @@
     hamburger.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Hamburger clicked');
       toggleSidebarState();
     });
 
@@ -97,13 +84,11 @@
       overlay.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Overlay clicked');
         toggleSidebarState();
       });
     }
 
     window.addEventListener('resize', () => {
-      console.log('Window resized');
       if (window.innerWidth >= 640) {
         sidebar.classList.remove('open');
         if (overlay) overlay.classList.remove('active');
@@ -112,14 +97,11 @@
       updateLayout();
     });
 
-    // Initial layout update
-    console.log('Initial layout update');
     updateLayout();
   }
 
   // Main initialization function
   function initializeApp() {
-    console.log('Initializing application...');
     
     // Initialize sidebar first
     initSidebar();
@@ -127,17 +109,13 @@
     // Initialize refresh button
     const refreshBtn = document.getElementById('refresh-btn');
     if (refreshBtn) {
-      console.log('Setting up refresh button...');
       refreshBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        console.log('Refresh button clicked');
         
         // Get elements
         const refreshIcon = document.getElementById('refresh-icon');
         const refreshSpinner = document.getElementById('refresh-spinner');
         const refreshText = document.getElementById('refresh-text');
-        
-        console.log('Refresh elements:', { refreshBtn, refreshIcon, refreshSpinner, refreshText });
         
         try {
           // Show loading state
@@ -146,12 +124,9 @@
           if (refreshSpinner) refreshSpinner.classList.remove('hidden');
           if (refreshText) refreshText.textContent = 'Refreshing...';
           
-          console.log('Loading state set, refreshing data...');
-          
           // Refresh data
           await renderEntryList();
           
-          console.log('Data refresh complete');
         } catch (error) {
           console.error('Error during refresh:', error);
         } finally {
@@ -160,20 +135,14 @@
           if (refreshIcon) refreshIcon.classList.remove('hidden');
           if (refreshSpinner) refreshSpinner.classList.add('hidden');
           if (refreshText) refreshText.textContent = 'Refresh';
-          console.log('Button state reset');
         }
       });
-      console.log('Refresh button setup complete');
-    } else {
-      console.error('Refresh button not found!');
     }
     
     // Initialize entry list and other components
     const initPage = async () => {
       try {
-        console.log('Initializing page components...');
         await renderEntryList();
-        console.log('Page components initialized');
       } catch (error) {
         console.error('Error initializing page:', error);
       }
@@ -207,7 +176,6 @@
       
       // Add change event listener to refresh data when date changes
       dateFilter.addEventListener('change', () => {
-        console.log('Date filter changed, refreshing data...');
         initPage();
       });
     }
@@ -238,10 +206,8 @@
     // Function: Render entry status pie chart
     // Purpose: Displays a pie chart showing the distribution of entry statuses (On Time, Late, Absent).
     const renderEntryChart = async () => {
-      console.log('entry.js: Rendering entry status pie chart');
       const canvas = document.getElementById('entryChart');
       if (!canvas) {
-        console.error('entry.js: Entry chart canvas not found');
         return null;
       }
 
@@ -289,14 +255,8 @@
           }
         });
 
-        console.log('entry.js: Entry status pie chart rendered', {
-          data: entryData,
-          width: canvas.width,
-          height: canvas.height
-        });
         return window.entryChart;
       } catch (error) {
-        console.error('entry.js: Error rendering entry chart:', error);
         const errorElement = document.createElement('div');
         errorElement.className = 'text-red-600 text-center text-sm mt-2';
         errorElement.textContent = 'Failed to load chart data';
@@ -359,7 +319,6 @@
     // Function: Render entry list with pagination
     // Purpose: Displays a paginated list of student entries (name, time, status).
     const renderEntryList = async () => {
-      console.log('entry.js: Rendering entry list');
       const entryList = document.getElementById('entry-list');
       const prevPageBtn = document.getElementById('prev-page');
       const nextPageBtn = document.getElementById('next-page');
@@ -371,7 +330,6 @@
       const refreshBtn = document.getElementById('refresh-btn');
 
       if (!entryList || !prevPageBtn || !nextPageBtn || !pageInfo) {
-        console.error('entry.js: Entry list elements not found');
         return;
       }
 
@@ -403,8 +361,6 @@
 
           return result.data;
         } catch (error) {
-          console.error('Error fetching entry list:', error);
-          // Return empty data structure to prevent fallback to test data
           return {
             entries: [],
             total: 0,
@@ -461,7 +417,6 @@
           currentPage = data.page;
           
         } catch (error) {
-          console.error('Error rendering entry list:', error);
           entryList.innerHTML = `<div class="text-center py-4 text-red-600">Error: ${error.message}</div>`;
         }
       };
@@ -479,32 +434,17 @@
 
       // Function to handle filter changes
       const handleFilterChange = async () => {
-        console.log('handleFilterChange called');
         const refreshBtn = document.getElementById('refresh-btn');
         const refreshIcon = document.getElementById('refresh-icon');
         const refreshSpinner = document.getElementById('refresh-spinner');
         const refreshText = document.getElementById('refresh-text');
         
-        console.log('Elements:', { refreshBtn, refreshIcon, refreshSpinner, refreshText });
-        
         // Show loading state
         if (refreshBtn && refreshIcon && refreshSpinner && refreshText) {
-          console.log('Setting loading state...');
           refreshBtn.disabled = true;
-          console.log('Button disabled');
           refreshIcon.classList.add('hidden');
-          console.log('Icon hidden');
           refreshSpinner.classList.remove('hidden');
-          console.log('Spinner shown');
           refreshText.textContent = 'Refreshing...';
-          console.log('Text updated to Refreshing...');
-        } else {
-          console.error('One or more refresh elements not found:', {
-            refreshBtn: !!refreshBtn,
-            refreshIcon: !!refreshIcon,
-            refreshSpinner: !!refreshSpinner,
-            refreshText: !!refreshText
-          });
         }
         
         try {
@@ -549,25 +489,17 @@
 
       // Add click event listener to refresh button
       if (refreshBtn) {
-        console.log('Setting up refresh button event listener');
         refreshBtn.addEventListener('click', (e) => {
           e.preventDefault();
-          console.log('Refresh button clicked');
-          console.log('Calling handleFilterChange...');
           try {
             handleFilterChange();
-            console.log('handleFilterChange called successfully');
           } catch (error) {
             console.error('Error in refresh button handler:', error);
           }
         });
-        console.log('Refresh button event listener set up');
-      } else {
-        console.error('Refresh button element not found!');
       }
 
       // Initial render
-      console.log('entry.js: Starting initialization');
       handleFilterChange();
     };
 

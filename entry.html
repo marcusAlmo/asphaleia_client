@@ -181,9 +181,6 @@
       // Load entry.js after the DOM is fully loaded
       const script = document.createElement('script');
       script.src = 'entry.js';
-      script.onload = function() {
-        console.log('entry.js loaded successfully');
-      };
       document.body.appendChild(script);
     });
   </script>
